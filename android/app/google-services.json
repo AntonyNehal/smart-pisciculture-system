@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1000489553647",
+    "project_id": "smart-pisciculture-system",
+    "storage_bucket": "smart-pisciculture-system.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1000489553647:android:c250f42ab033349807d51a",
+        "android_client_info": {
+          "package_name": "com.nehal.smart_pisciculture_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2qeRbW3Mbeq13JbGAKriimDivzzmEYBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

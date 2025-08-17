@@ -1,0 +1,75 @@
+# name: smart_pisciculture_system
+# description: "A new Flutter project."
+
+# publish_to: "none"
+
+# version: 1.0.0+1
+
+# environment:
+#   sdk: ^3.8.1
+
+# dependencies:
+#   flutter:
+#     sdk: flutter
+#   firebase_core: ^4.0.0
+#   firebase_auth: ^6.0.0
+#   cloud_firestore: ^6.0.0
+#   intl: ^0.18.0
+#   http: ^1.1.0
+
+#   cupertino_icons: ^1.0.8
+
+# dev_dependencies:
+#   flutter_test:
+#     sdk: flutter
+
+#   flutter_lints: ^5.0.0
+
+# flutter:
+#   uses-material-design: true
+#   assets:
+#     - assets/icons/appicon.png
+
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "assets/icons/appicon.png"
+
+name: smart_pisciculture_system
+description: "A new Flutter project."
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^4.0.0
+  firebase_auth: ^6.0.0
+  cloud_firestore: ^6.0.0
+  intl: ^0.18.0
+  http: ^1.1.0
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^2.0.0 # Added Riverpod for state management
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1 # Added here
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/MeeMee.png
+    - assets/images/bg1.jpeg
+    - assets/images/bg2.jpeg # Placeholder image for UI
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/MeeMee.png"

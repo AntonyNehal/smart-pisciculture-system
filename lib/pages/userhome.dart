@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smart_pisciculture_system/components/custom_app_bar.dart';
+import 'package:smart_pisciculture_system/pages/weatherDetailsPage.dart';
+import 'package:smart_pisciculture_system/pages/waterqualitypage.dart';
+import 'package:smart_pisciculture_system/pages/harvest_predict.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,8 +14,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  String userName = "User";
-  bool isLoading = true;
   late AnimationController _animationController;
 
   @override
@@ -23,7 +24,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 800),
     );
     _animationController.forward();
-    _loadUserData();
   }
 
   @override
@@ -32,42 +32,42 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> _loadUserData() async {
-    try {
-      User? currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(currentUser.uid)
-            .get();
-
-        if (userDoc.exists && mounted) {
-          setState(() {
-            userName = userDoc['name'] ?? "User";
-            isLoading = false;
-          });
-        }
-      }
-    } catch (e) {
-      print("Error loading user data: $e");
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }
-  }
-
   void _navigateToPage(String title) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Navigation to $title page")),
-    );
+    if (title == 'Weather Insights') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const WeatherDetailsPage(city: 'Kochi'),
+        ),
+      );
+    } else if (title == 'Water Quality Monitor') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const WaterQualityPage(),
+        ),
+      );
+    }
+      else if (title == 'Harvest Prediction') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HarvestPredictionPage(),
+          ),
+        );
+      } 
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Navigation to $title page")),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
-      backgroundColor: Colors.teal.shade400,
       appBar: const CustomAppBar(showHomeButton: false),
       body: Container(
         width: double.infinity,
@@ -82,29 +82,40 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ],
           ),
         ),
-        child: isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              )
-            : LayoutBuilder(
-                builder: (context, constraints) {
+        // 🔁 StreamBuilder automatically updates when Firestore changes
+        child: currentUser == null
+            ? const Center(child: Text("No user logged in"))
+            : StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(currentUser.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                        child: CircularProgressIndicator(color: Colors.white));
+                  }
+
+                  if (!snapshot.hasData || !snapshot.data!.exists) {
+                    return const Center(
+                        child: Text(
+                      "User data not found",
+                      style: TextStyle(color: Colors.white),
+                    ));
+                  }
+
+                  var userData =
+                      snapshot.data!.data() as Map<String, dynamic>? ?? {};
+                  String userName = userData['name'] ?? "User";
+
                   return SingleChildScrollView(
                     padding: const EdgeInsets.all(16),
-                    physics: const BouncingScrollPhysics(),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight,
-                      ),
-                      child: IntrinsicHeight(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            _buildWelcomeCard(),
-                            const SizedBox(height: 20),
-                            Expanded(child: _buildDashboardGrid()),
-                          ],
-                        ),
-                      ),
+                    child: Column(
+                      children: [
+                        _buildWelcomeCard(userName),
+                        const SizedBox(height: 24),
+                        _buildDashboardGrid(),
+                      ],
                     ),
                   );
                 },
@@ -113,7 +124,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildWelcomeCard() {
+  Widget _buildWelcomeCard(String userName) {
     return FadeTransition(
       opacity: _animationController,
       child: SlideTransition(
@@ -214,6 +225,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         'delay': 0.3,
       },
       {
+        'icon': '⏰',
+        'title': 'Harvest Prediction',
+        'description':
+            'Predict optimal harvest time based on fish growth and feeding patterns',
+        'gradient': [Colors.green.shade300, Colors.teal.shade400],
+        'delay': 0.5,
+      },
+      {
         'icon': '⚙️',
         'title': 'System Control',
         'description':
@@ -221,18 +240,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         'gradient': [Colors.green.shade300, Colors.teal.shade400],
         'delay': 0.4,
       },
-      {
-        'icon': 'Harvest Time ⏰',
-        'title': 'Harvest Prediction',
-        'description':
-            'Predict optimal harvest time based on fish growth and feeding patterns',
-        'gradient': [Colors.green.shade300, Colors.teal.shade400],
-        'delay': 0.5,
-      },
     ];
 
     return GridView.builder(
-      padding: EdgeInsets.zero,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:smart_pisciculture_system/pages/adminhome.dart';
-import 'package:smart_pisciculture_system/pages/home.dart';
+import 'package:smart_pisciculture_system/pages/userhome.dart';
 import 'package:smart_pisciculture_system/pages/signin_page.dart';
 
 void main() async {
@@ -57,6 +57,7 @@ class _AuthStateHandlerState extends State<AuthStateHandler> {
             .collection('users')
             .doc(user.uid)
             .get();
+
 
         if (!mounted) return;
         if (userDoc.exists) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_pisciculture_system/pages/adminhome.dart';
-import 'package:smart_pisciculture_system/pages/home.dart';
+import 'package:smart_pisciculture_system/pages/userhome.dart';
 import 'signup_page.dart';
 import 'package:smart_pisciculture_system/services/auth_services.dart';
 
